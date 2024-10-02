@@ -2,6 +2,7 @@ import {cart, removeFromCart} from '../data/cart.js';
 import {products} from '../data/products.js';
 
 let checkoutHtml = '';
+quantityCalculator();
 
 cart.forEach((cartItem) => {
 
@@ -13,7 +14,6 @@ cart.forEach((cartItem) => {
             cartProduct = product;
         }
     });
-
 
     checkoutHtml += `<div class="cart-item-container js-cart-item-container-${cartProduct.id}">
         <div class="delivery-date">
@@ -93,12 +93,24 @@ cart.forEach((cartItem) => {
 });
 
 document.querySelector('.js-order-summary').innerHTML = checkoutHtml;
-document.querySelectorAll('js-delete-quantity').forEach((button) => {
+document.querySelectorAll('.js-delete-quantity').forEach((button) => {
     button.addEventListener('click', () => {
         const productId = button.dataset.productId;
         removeFromCart(productId);
 
-        const container = document.querySelector(`js-cart-item-container-${cartProduct.id}`);
+        const container = document.querySelector(`.js-cart-item-container-${productId}`);
         container.remove();
-    })
-})
+        quantityCalculator();
+    });
+});
+
+function quantityCalculator(){
+    let cartQuantity = 0;
+
+    cart.forEach((cartItem) => {
+    cartQuantity += cartItem.quantity;
+    });
+
+    document.querySelector('.js-return-to-home-link')
+    .innerHTML = `${cartQuantity} items`;
+}
